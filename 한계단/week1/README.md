@@ -1,32 +1,23 @@
 # Week 01 - Todo List
 
-## 과제 링크
+## 문제 설명
 
-https://www.greatfrontend.com/questions/user-interface/todo-list?practice=practice&tab=coding
+Todo List 앱용 기존 HTML이 일부 제공됩니다. 앱에 다음 기능을 추가하세요.
 
-## 과제 목표
+- "제출" 버튼을 클릭하면 새로운 작업을 추가할 수 있습니다.
+  - `<input>` 추가가 성공하면 해당 필드가 정리되어야 합니다.
 
-React와 TypeScript를 사용하여 간단한 Todo List를 구현했다.
+- "삭제" 버튼을 클릭하면 할 일 목록에서 작업을 제거할 수 있습니다.
 
-이번 과제에서는 단순 기능 구현보다는:
+[문제 링크](https://www.greatfrontend.com/questions/user-interface/todo-list?practice=practice&tab=coding)
 
-- 컴포넌트 분리
-- 상태 관리 방식
-- props를 통한 데이터 전달
-- 배열 상태 업데이트 방식
+> 소요 시간 - 총 56분 4초
+>
+> - 처음에는 객체 형태로 약 30분 정도 구현했지만,
+>   이후 가독성과 데이터 활용 방식을 고려하여
+>   배열 구조로 처음부터 다시 구현했다.
 
-위주로 이해하려고 했다.
-
----
-
-## 소요 시간
-
-- 총 56분 4초 소요
-- 처음에는 객체 형태로 약 30분 정도 구현했지만,
-  이후 가독성과 데이터 활용 방식을 고려하여
-  배열 구조로 처음부터 다시 구현했다.
-
-# 데이터 구조와 상태 관리
+## 데이터 구조와 상태 관리
 
 초기 데이터는 배열 형태로 관리했다.
 
@@ -50,73 +41,29 @@ const tasksData = {
 
 이 방식은 배열 메서드(`map`, `filter`) 사용이 불편했다.
 
-Todo List는:
-
-- 추가
-- 삭제
-- 수정
-
-등 배열 기반 처리가 많기 때문에 객체 배열 구조가 더 적절하다고 판단했다.
-
-상태는 다음과 같이 관리했다.
+Todo List는 `추가`, `삭제`. `수정` 등 배열 기반 처리가 많기 때문에 객체 배열 구조가 더 적절하다고 판단했다.
 
 ```tsx
-const [tasks, setTasks] = useState<{ id: number; task: string }[]>(tasksData);
+할 일 목록은 `{ id, task }` 형태의 객체 배열 상태로 관리했다.
+입력값은 문자열 상태로 분리하여 관리했다.
 
+const [tasks, setTasks] = useState<{ id: number; task: string }[]>(tasksData);
 const [input, setInput] = useState<string>("");
 ```
 
-## tasks
+## Todo 추가와 삭제
 
-Todo 목록 상태를 관리한다.
-
-TypeScript를 사용하여:
-
-- id는 number
-- task는 string
-
-형태로 타입을 지정했다.
-
-## input
-
-사용자의 입력값 상태를 관리한다.
-
-처음에는:
-
-```tsx
-useState<string>();
-```
-
-형태로 선언했지만,
-이 경우 `string | undefined` 타입이 되기 때문에 초기값을 빈 문자열로 수정했다.
-
-```tsx
-useState<string>("");
-```
-
----
-
-# Todo 추가와 삭제
-
-## Todo 추가
+### Todo 추가
 
 ```tsx
 const addTask = () => {
-  if (input.trim().length === 0) return;
-
+  if (input.trim().length === 0) return; //공백만 입력한 경우 추가되지 않도록 처리했다.
   const newId = Math.max(...tasks.map((item) => item.id)) + 1;
-
   setTasks((prev) => [...prev, { id: newId, task: input }]);
 };
 ```
 
-공백만 입력한 경우 추가되지 않도록 처리했다.
-
-```tsx
-input.trim().length === 0;
-```
-
-## 새로운 id 생성
+### 새로운 id 생성
 
 처음에는:
 
@@ -164,12 +111,9 @@ const deleteTask = (id: number) => {
 
 에 적합한 `filter()`를 사용했다.
 
-객체 구조였다면 `delete` 키워드를 사용했겠지만,
-배열에서는 `filter`가 더 자연스럽다고 이해했다.
+객체 구조였다면 `delete` 키워드를 사용했을 것이다.
 
----
-
-# 컴포넌트 분리와 Props 전달
+## 컴포넌트 분리와 Props 전달
 
 ```tsx
 <TaskItem item={task} key={task.id} onDelete={deleteTask} />
@@ -182,6 +126,74 @@ const deleteTask = (id: number) => {
 - 역할 분리
 - 재사용성
 - 가독성 향상
+
+## 최종코드
+
+```tsx
+import { useState } from "react";
+
+const tasksData = [
+  { id: 1, task: "Walk the dog" },
+  { id: 2, task: "Water the plants" },
+  { id: 3, task: "Wash the dishes" },
+];
+
+export default function Home() {
+  const [tasks, setTasks] = useState<{ id: number; task: string }[]>(tasksData);
+  const [input, setInput] = useState<string>("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setInput(e.target.value);
+
+  const addTask = () => {
+    if (input.trim().length === 0) return;
+    const newId = Math.max(...tasks.map((item) => Number(item.id))) + 1;
+    setTasks((prev) => [...prev, { id: newId, task: input }]);
+  };
+
+  const deleteTask = (id: number) => {
+    const newTasks = tasks.filter((item) => item.id !== id);
+    setTasks(newTasks);
+  };
+
+  return (
+    <div>
+      <h1>Todo List</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Add your task"
+          onChange={handleChange}
+        />
+        <div>
+          <button onClick={addTask}>Submit</button>
+        </div>
+      </div>
+      <ul>
+        {tasks.map((task) => (
+          <TaskItem item={task} key={task.id} onDelete={deleteTask} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+const TaskItem = ({
+  item,
+  onDelete,
+}: {
+  item: { id: number; task: string };
+  onDelete: (id: number) => void;
+}) => {
+  const { id, task } = item;
+  return (
+    <li>
+      <span>{task}</span>
+      <button onClick={() => onDelete(id)}>Delete</button>
+    </li>
+  );
+};
+```
 
 # 회고
 
