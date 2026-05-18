@@ -140,6 +140,7 @@ const tasksData = [
 
 export default function Home() {
   const [tasks, setTasks] = useState<{ id: number; task: string }[]>(tasksData);
+
   const [input, setInput] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -149,6 +150,7 @@ export default function Home() {
     if (input.trim().length === 0) return;
     const newId = Math.max(...tasks.map((item) => Number(item.id))) + 1;
     setTasks((prev) => [...prev, { id: newId, task: input }]);
+    setInput(""); // 수정
   };
 
   const deleteTask = (id: number) => {
@@ -164,6 +166,7 @@ export default function Home() {
           type="text"
           placeholder="Add your task"
           onChange={handleChange}
+          value={input} // 수정
         />
         <div>
           <button onClick={addTask}>Submit</button>

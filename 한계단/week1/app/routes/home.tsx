@@ -18,7 +18,7 @@ export default function Home() {
     if (input.trim().length === 0) return;
     const newId = Math.max(...tasks.map((item) => Number(item.id))) + 1;
     setTasks((prev) => [...prev, { id: newId, task: input }]);
-    setInput("");
+    setInput(""); // 수정
   };
 
   const deleteTask = (id: number) => {
@@ -34,7 +34,7 @@ export default function Home() {
           type="text"
           placeholder="Add your task"
           onChange={handleChange}
-          value={input}
+          value={input} // 수정
         />
         <div>
           <button onClick={addTask}>Submit</button>
