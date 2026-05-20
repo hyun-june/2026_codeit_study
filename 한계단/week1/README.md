@@ -11,9 +11,7 @@ Todo List 앱용 기존 HTML이 일부 제공됩니다. 앱에 다음 기능을 
 
 [문제 링크](https://www.greatfrontend.com/questions/user-interface/todo-list?practice=practice&tab=coding)
 
-> 소요 시간 - 총 56분 4초
->
-> - 처음에는 객체 형태로 약 30분 정도 구현했지만,
+> - 처음에는 객체 형태로 구현했지만,
 >   이후 가독성과 데이터 활용 방식을 고려하여
 >   배열 구조로 처음부터 다시 구현했다.
 
